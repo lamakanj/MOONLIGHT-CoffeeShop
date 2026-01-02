@@ -13,7 +13,7 @@ function Menu() {
     image: null
   });
 
-  const [error, setError] = useState(false);
+  const [, setError] = useState(false);
 
 
   const handleDelete = async (id) => {

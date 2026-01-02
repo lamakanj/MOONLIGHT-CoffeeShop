@@ -6,7 +6,7 @@ import ComboBox from '../Components/ComboBox';
 function Update() {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
-  const [categoryID, setCategoryID] = useState('');
+  const [, setCategoryID] = useState('');
   const [image, setImage] = useState('');
   const [newImage, setNewImage] = useState(null);
   const [selectedValue, setSelectedValue] = useState('');
