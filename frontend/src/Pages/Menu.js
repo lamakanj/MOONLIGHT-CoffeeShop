@@ -16,14 +16,18 @@ function Menu() {
   const [, setError] = useState(false);
 
   const handleDelete = async (id) => {
-    console.log(id);
-    try {
-      await axios.delete(`${process.env.REACT_APP_API_URL}/items/${id}`);
-      window.location.reload();
-    } catch (err) {
-      console.log(err);
-    } 
-  };
+  try {
+    await axios.delete(`${process.env.REACT_APP_API_URL}/items/${id}`);
+
+   
+    setItems(prevItems =>
+      prevItems.filter(item => item.id !== id)
+    );
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 
   const fetchAllItems = async () => {
     try {
