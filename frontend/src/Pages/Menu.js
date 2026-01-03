@@ -12,22 +12,17 @@ function Menu() {
     price: "",
     image: null
   });
-
   const [, setError] = useState(false);
 
+ 
   const handleDelete = async (id) => {
-  try {
-    await axios.delete(`${process.env.REACT_APP_API_URL}/items/${id}`);
-
-   
-    setItems(prevItems =>
-      prevItems.filter(item => item.id !== id)
-    );
-  } catch (err) {
-    console.log(err);
-  }
-};
-
+    try {
+      await axios.delete(`${process.env.REACT_APP_API_URL}/items/${id}`);
+      setItems(prevItems => prevItems.filter(i => i.id !== id)); 
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   const fetchAllItems = async () => {
     try {
@@ -50,6 +45,7 @@ function Menu() {
     setItem((prev) => ({ ...prev, image: e.target.files[0] }));
   };
 
+      
   const handleClick = async (e) => {
     e.preventDefault();
     
@@ -58,80 +54,61 @@ function Menu() {
       return;
     }
 
-    let CategoryID;
-    if (selectedCategory === "breakfast") {
-      CategoryID = 1;
-    } else if (selectedCategory === "dessert") {
-      CategoryID = 2;
-    } else if (selectedCategory === "cold") {
-      CategoryID = 3;
-    } else if (selectedCategory === "hot") {
-      CategoryID = 4;
-    }
+    const categories = {
+      breakfast: 1,
+      dessert: 2,
+      cold: 3,
+      hot: 4
+    };
+    const CategoryID = categories[selectedCategory];
 
     const formdata = new FormData();
-    formdata.append('name', item.name);
-    formdata.append('price', item.price);
-    formdata.append('CategoryID', CategoryID);
-    formdata.append('image', item.image);
+    formdata.append("name", item.name);
+    formdata.append("price", item.price);
+    formdata.append("CategoryID", CategoryID);
+    formdata.append("image", item.image);
 
     try {
-      await axios.post(`${process.env.REACT_APP_API_URL}/items`, formdata);
-      
-      // Clear form
-      setItem({
-        name: "",
-        price: "",
-        image: null
-      });
-      document.getElementById('imageInput').value = "";
-      
-      // Refresh items
-      fetchAllItems();
+      const response = await axios.post(`${process.env.REACT_APP_API_URL}/items`, formdata);
+
+      const newItem = {
+        id: response.data.insertId || Date.now(),
+        name: item.name,
+        price: item.price,
+        CategoryName: selectedCategory,
+        image: null 
+      };
+      setItems(prevItems => [...prevItems, newItem]);
+
+      setItem({ name: "", price: "", image: null });
+      document.getElementById("imageInput").value = "";
+
     } catch (err) {
       console.log(err);
       setError(true);
     }
   };
 
-  
-  const filteredItems = items.filter(item => 
-  item.CategoryName?.toLowerCase() === selectedCategory.toLowerCase()
-);
-
+  const filteredItems = items.filter(i => 
+    i.CategoryName?.toLowerCase() === selectedCategory.toLowerCase()
+  );
 
   return (
     <div className="menu">
       <h2>Our Full Menu</h2>
     
       <div className="menu-categories">
-        <button
-          onClick={() => setSelectedCategory("breakfast")}
-          className={selectedCategory === "breakfast" ? "active" : ""}
-        >
-          Breakfast
-        </button>
-
-        <button
-          onClick={() => setSelectedCategory("dessert")}
-          className={selectedCategory === "dessert" ? "active" : ""}
-        >
-          Dessert
-        </button>
-
-        <button
-          onClick={() => setSelectedCategory("cold")}
-          className={selectedCategory === "cold" ? "active" : ""}
-        >
-          Cold Drinks
-        </button>
-        
-        <button
-          onClick={() => setSelectedCategory("hot")}
-          className={selectedCategory === "hot" ? "active" : ""}
-        >
-          Hot Drinks
-        </button>
+        {["breakfast","dessert","cold","hot"].map(cat => (
+          <button
+            key={cat}
+            onClick={() => setSelectedCategory(cat)}
+            className={selectedCategory === cat ? "active" : ""}
+          >
+            {cat === "breakfast" ? "Breakfast" :
+             cat === "dessert" ? "Dessert" :
+             cat === "cold" ? "Cold Drinks" : "Hot Drinks"}
+          </button>
+        ))}
       </div>
 
       <div className="add-form">
@@ -153,26 +130,22 @@ function Menu() {
         <input
           id="imageInput"
           type="file"
-          placeholder="Image URL"
           onChange={handleImageChange}
         />
         <button onClick={handleClick}>Add Item</button>
       </div>
 
       <div className="menu-items">
-        {filteredItems.map((item) => (
-          <div key={item.id} className="menu-item">
-            <img src={`data:image/png;base64,${item.image}`} alt="" />
-            <h3>{item.name}</h3>
-            <p>{item.price}$</p>
+        {filteredItems.map((i) => (
+          <div key={i.id} className="menu-item">
+            {i.image && <img src={`data:image/png;base64,${i.image}`} alt="" />}
+            <h3>{i.name}</h3>
+            <p>{i.price}$</p>
             <div className="item-actions">
-              <button
-                className="remove-btn"
-                onClick={() => handleDelete(item.id, item.name)}
-              >
+              <button className="remove-btn" onClick={() => handleDelete(i.id)}>
                 <DeleteIcon/>
               </button>
-              <Link to={`/update/${item.id}`}>
+              <Link to={`/update/${i.id}`}>
                 <button className="update-btn">
                   <EditIcon/>
                 </button>
