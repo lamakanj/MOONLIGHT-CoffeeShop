@@ -15,29 +15,28 @@ function Menu() {
 
   const [, setError] = useState(false);
 
-
   const handleDelete = async (id) => {
     console.log(id);
     try {
-  await axios.delete(`${process.env.REACT_APP_API_URL}/items/${id}`
-  );
-    window.location.reload()
+      await axios.delete(`${process.env.REACT_APP_API_URL}/items/${id}`);
+      window.location.reload();
     } catch (err) {
-    console.log(err); } 
+      console.log(err);
+    } 
   };
 
   const fetchAllItems = async () => {
-  try {
-  const res = await axios.get(`${process.env.REACT_APP_API_URL}/items`);
-  setItems(res.data);
-}catch (err) {
-    console.log(err);
-  }
-};
+    try {
+      const res = await axios.get(`${process.env.REACT_APP_API_URL}/items`);
+      setItems(res.data);
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
-useEffect(() => {
-  fetchAllItems();
-}, []);
+  useEffect(() => {
+    fetchAllItems();
+  }, []);
 
   const handleChange = (e) => {
     setItem((prev) => ({ ...prev, [e.target.name]: e.target.value }));
@@ -50,14 +49,12 @@ useEffect(() => {
   const handleClick = async (e) => {
     e.preventDefault();
     
-    
     if (!item.name || !item.price || !item.image) {
       alert("Please fill in all fields!");
       return;
     }
 
     let CategoryID;
-    
     if (selectedCategory === "breakfast") {
       CategoryID = 1;
     } else if (selectedCategory === "dessert") {
@@ -74,29 +71,29 @@ useEffect(() => {
     formdata.append('CategoryID', CategoryID);
     formdata.append('image', item.image);
 
-  try {
-    await axios.post(`${process.env.REACT_APP_API_URL}/items`, formdata);
-    
-    // Clear form
-    setItem({
-      name: "",
-      price: "",
-      image: null
-    });
-    document.getElementById('imageInput').value = "";
-    
-    // Refresh items
-    fetchAllItems();
-    
-  }catch (err) {
+    try {
+      await axios.post(`${process.env.REACT_APP_API_URL}/items`, formdata);
+      
+      // Clear form
+      setItem({
+        name: "",
+        price: "",
+        image: null
+      });
+      document.getElementById('imageInput').value = "";
+      
+      // Refresh items
+      fetchAllItems();
+    } catch (err) {
       console.log(err);
       setError(true);
     }
   };
 
-
-
-    const filteredItems = items.filter(item => item.CategoryName === selectedCategory);
+  
+  const filteredItems = items.filter(item => 
+    item.categoryName?.toLowerCase() === selectedCategory.toLowerCase()
+  );
 
   return (
     <div className="menu">
@@ -149,6 +146,7 @@ useEffect(() => {
           onChange={handleChange}
         />
         <input
+          id="imageInput"
           type="file"
           placeholder="Image URL"
           onChange={handleImageChange}
@@ -158,23 +156,24 @@ useEffect(() => {
 
       <div className="menu-items">
         {filteredItems.map((item) => (
-        <div key={item.id} className="menu-item">
-          <img src={`data:image/png;base64,${item.image}`} alt="" />
-          <h3>{item.name}</h3>
-          <p>{item.price}$</p>
-          <div className="item-actions">
-            <button
-              className="remove-btn"
-              onClick={() => handleDelete(item.id, item.name)}>
-              <DeleteIcon/>
-            </button>
-            <Link to={`/update/${item.id}`}>
-              <button className="update-btn">
-                <EditIcon/>
+          <div key={item.id} className="menu-item">
+            <img src={`data:image/png;base64,${item.image}`} alt="" />
+            <h3>{item.name}</h3>
+            <p>{item.price}$</p>
+            <div className="item-actions">
+              <button
+                className="remove-btn"
+                onClick={() => handleDelete(item.id, item.name)}
+              >
+                <DeleteIcon/>
               </button>
-            </Link>
+              <Link to={`/update/${item.id}`}>
+                <button className="update-btn">
+                  <EditIcon/>
+                </button>
+              </Link>
+            </div>
           </div>
-        </div>
         ))}
       </div>
     </div>
