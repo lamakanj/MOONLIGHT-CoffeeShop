@@ -6,7 +6,7 @@ function ComboBox({ onValueChange, selectedValue }) {
 
     useEffect(() => {
 
-        fetch('http://localhost:5000/categories')
+       fetch(`${process.env.REACT_APP_API_URL}/categories`)
 
         .then(response => response.json())
 

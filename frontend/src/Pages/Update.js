@@ -15,15 +15,15 @@ function Update() {
   const navigate = useNavigate();
   const { id } = useParams();
 
-  useEffect(() => {
-    axios.get('http://localhost:5000/search/' + id)
-      .then(res => {
-        setName(res.data[0].name);
-        setPrice(res.data[0].price);
-        setCategoryID(res.data[0].CategoryID);
-        setSelectedValue(res.data[0].CategoryID);
-        setImage(res.data[0].image);
-      })
+ useEffect(() => {
+  axios.get(`${process.env.REACT_APP_API_URL}/search/${id}`)
+    .then(res => {
+      setName(res.data[0].name);
+      setPrice(res.data[0].price);
+      setCategoryID(res.data[0].CategoryID);
+      setSelectedValue(res.data[0].CategoryID);
+      setImage(res.data[0].image);
+    })
       .catch(err => console.log(err));
   }, [id]);
 
@@ -48,9 +48,9 @@ function Update() {
     }
 
     try {
-      await axios.post(`http://localhost:5000/modify/${id}`, formdata);
-      navigate("/menu");
-    } catch (err) {
+    await axios.post(`${process.env.REACT_APP_API_URL}/modify/${id}`, formdata);
+    navigate("/menu");
+  }catch (err) {
       console.log(err);
       setError(true);
     }

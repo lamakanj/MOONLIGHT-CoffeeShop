@@ -19,8 +19,8 @@ function Menu() {
   const handleDelete = async (id) => {
     console.log(id);
     try {
-    await axios.delete(`http://localhost:5000/items/${id}`
-    );
+  await axios.delete(`${process.env.REACT_APP_API_URL}/items/${id}`
+  );
     window.location.reload()
     } catch (err) {
     console.log(err); } 
@@ -28,9 +28,9 @@ function Menu() {
 
   const fetchAllItems = async () => {
   try {
-    const res = await axios.get("http://localhost:5000/items");
-    setItems(res.data);
-  } catch (err) {
+  const res = await axios.get(`${process.env.REACT_APP_API_URL}/items`);
+  setItems(res.data);
+}catch (err) {
     console.log(err);
   }
 };
@@ -74,21 +74,21 @@ useEffect(() => {
     formdata.append('CategoryID', CategoryID);
     formdata.append('image', item.image);
 
-    try {
-      await axios.post("http://localhost:5000/items", formdata);
-      
-      // Clear form
-      setItem({
-        name: "",
-        price: "",
-        image: null
-      });
-      document.getElementById('imageInput').value = "";
-      
-      // Refresh items
-      fetchAllItems();
-      
-    } catch (err) {
+  try {
+    await axios.post(`${process.env.REACT_APP_API_URL}/items`, formdata);
+    
+    // Clear form
+    setItem({
+      name: "",
+      price: "",
+      image: null
+    });
+    document.getElementById('imageInput').value = "";
+    
+    // Refresh items
+    fetchAllItems();
+    
+  }catch (err) {
       console.log(err);
       setError(true);
     }
