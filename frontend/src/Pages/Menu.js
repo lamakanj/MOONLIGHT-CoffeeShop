@@ -92,8 +92,9 @@ function Menu() {
 
   
   const filteredItems = items.filter(item => 
-    item.categoryName?.toLowerCase() === selectedCategory.toLowerCase()
-  );
+  item.CategoryName?.toLowerCase() === selectedCategory.toLowerCase()
+);
+
 
   return (
     <div className="menu">
