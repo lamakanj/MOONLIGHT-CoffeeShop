@@ -152,13 +152,15 @@ const nodemailer = require('nodemailer');
 
 // Configure email transporter
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true,
   auth: {
     user: 'lamakang2000@gmail.com',
     pass: 'akmiqzdgyvnpweap'
-  
   }
 });
+
 
 // Contact form endpoint
 app.post('/contact', async (req, res) => {
