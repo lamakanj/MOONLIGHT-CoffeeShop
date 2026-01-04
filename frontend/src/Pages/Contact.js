@@ -1,8 +1,7 @@
 import React, { useState } from "react";
-import axios from "axios";
+import emailjs from '@emailjs/browser';
 
 const Contact = () => {
-  const [submittedData, setSubmittedData] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(false);
@@ -13,28 +12,29 @@ const Contact = () => {
     setError(null);
     setSuccess(false);
 
-    const formData = {
+    const templateParams = {
       name: e.target.name.value,
       email: e.target.email.value,
-      message: e.target.message.value,
+      message: e.target.message.value
     };
 
     try {
+      await emailjs.send(
+        'service_wd96yn7',
+        'template_nf4nfqf',
+        templateParams,
+        'rrAj6yu30QQuLurg4'
+      );
       
-      await axios.post(`${process.env.REACT_APP_API_URL}/contact`, formData);
-      
-      setSubmittedData(formData);
       setSuccess(true);
-      
       e.target.reset();
       
       setTimeout(() => {
         setSuccess(false);
-        setSubmittedData(null);
       }, 10000);
       
     } catch (err) {
-      console.error('Error sending message:', err);
+      console.error('Error:', err);
       setError('Failed to send message. Please try again.');
     } finally {
       setLoading(false);
@@ -67,7 +67,7 @@ const Contact = () => {
           marginTop: '1rem',
           color: '#2e7d32'
         }}>
-          <strong>Success!</strong> Thank you for contacting us! We've sent a confirmation email to {submittedData?.email}.
+          <strong>Success!</strong> Your message has been sent!
         </div>
       )}
 
@@ -81,34 +81,6 @@ const Contact = () => {
           color: '#c62828'
         }}>
           <strong>Error:</strong> {error}
-        </div>
-      )}
-
-      {submittedData && success && (
-        <div className="submitted-info">
-          <h3>Your Submitted Information</h3>
-          <table className="submitted-table">
-            <thead>
-              <tr>
-                <th>Field</th>
-                <th>Value</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td>Name</td>
-                <td>{submittedData.name}</td>
-              </tr>
-              <tr>
-                <td>Email</td>
-                <td>{submittedData.email}</td>
-              </tr>
-              <tr>
-                <td>Message</td>
-                <td>{submittedData.message}</td>
-              </tr>
-            </tbody>
-          </table>
         </div>
       )}
 
