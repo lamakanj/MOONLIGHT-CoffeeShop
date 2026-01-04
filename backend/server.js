@@ -148,28 +148,27 @@ app.post("/modify/:id", upload.single('image'), (req, res) => {
   });
 });
 
-const nodemailer = require('nodemailer');
-
 // Configure email transporter
 const transporter = nodemailer.createTransport({
   host: 'smtp.gmail.com',
   port: 465,
   secure: true,
   auth: {
-    user: 'lamakang2000@gmail.com',
-    pass: 'akmiqzdgyvnpweap'
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS
   }
 });
-
 
 // Contact form endpoint
 app.post('/contact', async (req, res) => {
   const { name, email, message } = req.body;
 
+  const fromAddress = `"Moonlight Coffee Shop" <${process.env.EMAIL_USER}>`;
+
   try {
     // Email to the customer (thank you email)
     const customerMailOptions = {
-      from: '"Moonlight Coffee Shop" <lamakang2000@gmail.com>',
+      from: fromAddress,
       to: email,
       subject: 'Thank You for Contacting Us - Coffee Shop',
       html: `
@@ -177,32 +176,25 @@ app.post('/contact', async (req, res) => {
           <div style="background-color: #3e2c1c; padding: 20px; text-align: center; border-radius: 10px 10px 0 0;">
             <h1 style="color: #fdf6ee; margin: 0;">Thank You for Contacting Us!</h1>
           </div>
-          
           <div style="background-color: white; padding: 30px; border-radius: 0 0 10px 10px; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
             <p style="font-size: 16px; color: #3e2c1c;">Dear ${name},</p>
-            
             <p style="font-size: 16px; color: #3e2c1c; line-height: 1.6;">
               Thank you for reaching out to us! We have received your message and will get back to you as soon as possible.
             </p>
-            
             <div style="background-color: #f0ebe3; padding: 20px; border-radius: 8px; margin: 20px 0;">
               <h3 style="color: #3e2c1c; margin-top: 0;">Your Message:</h3>
               <p style="color: #5f4d3a; font-style: italic;">"${message}"</p>
             </div>
-            
             <p style="font-size: 16px; color: #3e2c1c; line-height: 1.6;">
               In the meantime, feel free to visit us at:<br>
               <strong>123 Corniche Street, Beirut, Lebanon</strong>
             </p>
-            
             <p style="font-size: 16px; color: #3e2c1c; line-height: 1.6;">
               <strong>Opening Hours:</strong><br>
               Mon–Fri: 8am – 6pm<br>
               Sat–Sun: 9am – 4pm
             </p>
-            
             <hr style="border: none; border-top: 2px solid #d4c1ae; margin: 30px 0;">
-            
             <p style="font-size: 14px; color: #7a5e42; text-align: center;">
               Best regards,<br>
               <strong style="color: #3e2c1c;">The Coffee Shop Team</strong>
@@ -214,8 +206,8 @@ app.post('/contact', async (req, res) => {
 
     // Email to admins (both you and your friend)
     const adminMailOptions = {
-      from: '"Moonlight Coffee Shop" <lamakang2000@gmail.com>',
-      to: 'lamakang2000@gmail.com, likaaalyassine@gmail.com',  
+      from: fromAddress,
+      to: 'lamakang2000@gmail.com, likaaalyassine@gmail.com',
       subject: `New Contact Form Submission from ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5;">
@@ -243,6 +235,8 @@ app.post('/contact', async (req, res) => {
     res.status(500).json({ error: 'Failed to send email' });
   }
 });
+
+
 
 //sign up 
 app.post("/signup", (req, res) => {
