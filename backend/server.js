@@ -150,12 +150,13 @@ app.post("/modify/:id", upload.single('image'), (req, res) => {
 
 const nodemailer = require('nodemailer');
 
-// Configure email transporter (using Gmail as example)
+// Configure email transporter
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'likaaalyassine@gmail.com', // Your Gmail address
-    pass: 'gdtthgkkbqqcmagx'      // Your Gmail App Password (not regular password!)
+    user: 'lamakang2000@gmail.com',
+    pass: 'akmiqzdgyvnpweap'
+  
   }
 });
 
@@ -166,7 +167,7 @@ app.post('/contact', async (req, res) => {
   try {
     // Email to the customer (thank you email)
     const customerMailOptions = {
-      from: 'your-email@gmail.com',
+      from: '"Moonlight Coffee Shop" <lamakang2000@gmail.com>',
       to: email,
       subject: 'Thank You for Contacting Us - Coffee Shop',
       html: `
@@ -209,10 +210,10 @@ app.post('/contact', async (req, res) => {
       `
     };
 
-    // Email to yourself (notification email)
+    // Email to admins (both you and your friend)
     const adminMailOptions = {
-      from: 'your-email@gmail.com',
-      to: 'your-email@gmail.com', // Your email to receive notifications
+      from: '"Moonlight Coffee Shop" <lamakang2000@gmail.com>',
+      to: 'lamakang2000@gmail.com, likaaalyassine@gmail.com',  
       subject: `New Contact Form Submission from ${name}`,
       html: `
         <div style="font-family: Arial, sans-serif; padding: 20px; background-color: #f5f5f5;">
