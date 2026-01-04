@@ -5,6 +5,7 @@ const mysql = require('mysql2');
 const path = require("path");
 const multer = require("multer");
 const fs = require('fs');
+const nodemailer = require('nodemailer');
 
 const app = express();
 
